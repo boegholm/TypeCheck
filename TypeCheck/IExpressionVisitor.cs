@@ -1,6 +1,6 @@
 ﻿namespace TypeCheck
 {
-    interface IVisitor<out T>
+    interface IExpressionVisitor<out T>
     {
         T Visit(AddExpr e);
         T Visit(SubExpr e);

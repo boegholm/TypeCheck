@@ -5,12 +5,12 @@ namespace TypeCheck
 
     abstract record AExpr
     {
-        public abstract T Accept<T>(IVisitor<T> visitor);
-        ITypeVerdict TypeVerdict { get; set; }
+        public abstract T Accept<T>(IExpressionVisitor<T> visitor);
+        public string Type { get; set; }
     }
     record AddExpr(AExpr Lhs, AExpr Rhs) : AExpr
     {
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.Visit(this);
         }
@@ -18,7 +18,7 @@ namespace TypeCheck
 
     record SubExpr(AExpr Lhs, AExpr Rhs) : AExpr
     {
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.Visit(this);
         }
@@ -26,7 +26,7 @@ namespace TypeCheck
 
     record MulExpr(AExpr Lhs, AExpr Rhs) : AExpr
     {
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.Visit(this);
         }
@@ -34,7 +34,7 @@ namespace TypeCheck
 
     record DivExpr(AExpr Lhs, AExpr Rhs) : AExpr
     {
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.Visit(this);
         }
@@ -42,7 +42,7 @@ namespace TypeCheck
 
     record AndExpr(AExpr Lhs, AExpr Rhs) : AExpr
     {
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.Visit(this);
         }
@@ -50,7 +50,7 @@ namespace TypeCheck
 
     record OrExpr(AExpr Lhs, AExpr Rhs) : AExpr
     {
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.Visit(this);
         }
@@ -58,7 +58,7 @@ namespace TypeCheck
 
     record NameExpr(TIdent Name) : AExpr
     {
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.Visit(this);
         }
@@ -66,7 +66,7 @@ namespace TypeCheck
 
     record StringLit(string Value) : AExpr
     {
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.Visit(this);
         }
@@ -74,7 +74,7 @@ namespace TypeCheck
 
     record IntLit(int Value) : AExpr
     {
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.Visit(this);
         }
@@ -82,7 +82,7 @@ namespace TypeCheck
 
     record BoolLit(bool Value) : AExpr
     {
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.Visit(this);
         }
@@ -90,7 +90,7 @@ namespace TypeCheck
 
     record FunCall(TIdent Name, IEnumerable<AExpr> Args) : AExpr
     {
-        public override T Accept<T>(IVisitor<T> visitor)
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
         {
             return visitor.Visit(this);
         }
