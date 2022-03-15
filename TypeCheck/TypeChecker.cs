@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+// https://github.com/boegholm/TypeCheck
 namespace TypeCheck
 {
     class TypeChecker : IStatementVisitor<object>, IExpressionVisitor<object>
@@ -47,7 +47,9 @@ namespace TypeCheck
 
         public object Visit(FuncDecl s)
         {
-            throw new NotImplementedException();
+            s.body.Accept(this);
+            return null;
+         //   throw new NotImplementedException();
         }
 
         public object Visit(StmtSeq s)
@@ -79,7 +81,17 @@ namespace TypeCheck
 
         public object Visit(SubExpr e)
         {
-            throw new NotImplementedException();
+            var valid = new[] { "int" };
+            e.Lhs.Accept(this);
+            e.Rhs.Accept(this);
+
+            var invalid = new[] { e.Rhs.Type, e.Lhs.Type }.Except(valid);
+
+            if (invalid.Any())
+                throw new TypeErrorException(string.Join(", ", invalid) + " not valid for " + e.GetType().Name);
+
+            e.Type = EQ(e.Lhs.Type, e.Rhs.Type, e);
+            return null;
         }
 
         public object Visit(MulExpr e)
@@ -123,6 +135,8 @@ namespace TypeCheck
             throw new NotImplementedException();
         }
 
+        
+
         public object Visit(FunCall e)
         {
             if (st.TryLookup(e.Name.Value, out FuncDecl declaration))
@@ -137,7 +151,7 @@ namespace TypeCheck
 
         public object Visit(SkipStmt skip)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

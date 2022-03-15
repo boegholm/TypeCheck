@@ -4,6 +4,9 @@ using System.Text;
 
 namespace TypeCheck
 {
+
+
+
     class PPVisitor : IExpressionVisitor<string>, IStatementVisitor<string>
     {
         public string Visit(AddExpr e) => $"{e.Lhs.Accept(this)}+{e.Rhs.Accept(this)}";
@@ -64,7 +67,7 @@ namespace TypeCheck
 
         public string Visit(SkipStmt skip)
         {
-            throw new NotImplementedException();
+            return ";";
         }
     }
 }

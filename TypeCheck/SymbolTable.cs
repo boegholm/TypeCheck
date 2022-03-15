@@ -7,6 +7,12 @@ namespace TypeCheck
         public SymbolTable()
         {
             OpenScope(); // global scope
+            FuncDecl printISI = new FuncDecl(new TIdent("PrintISI"), new TBoolType(), new List<VarDecl> {
+                new VarDecl(new TIntType(), new TIdent("v")),
+                new VarDecl(new TStringType(), new TIdent("v")),
+                new VarDecl(new TIntType(), new TIdent("v")),}
+                , new SkipStmt());
+            AddDeclation(printISI);
         }
         Stack<Dictionary<string, IDeclaration>> Symbols { get; } = new Stack<Dictionary<string, IDeclaration>>();
         private Dictionary<string, IDeclaration> Current => Symbols.Peek();

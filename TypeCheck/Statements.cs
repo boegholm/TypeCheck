@@ -22,6 +22,7 @@ namespace TypeCheck
     {
         public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.Visit(this);
     }
+
     record StmtSeq(List<AStmt> Seq) : AStmt
     {
         public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.Visit(this);
