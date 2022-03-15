@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace TypeCheck
@@ -14,6 +15,8 @@ namespace TypeCheck
         }
         private bool Any(string type, params AExpr[] expressions) => expressions.Any(v => v.Type.Equals(type));
 
+        private IEnumerable<T> AE<T>(params T[] es) => es;
+
         public object Visit(VarDecl s)
         {
             st.AddDeclation(s);
@@ -22,9 +25,18 @@ namespace TypeCheck
 
         public object Visit(AssignStmt s)
         {
-            s.Value.Accept(this);
-            var vartype= st.Lookup(s.VarName.Value);
-            return this;
+
+            if(st.TryLookup(s.VarName.Value, out VarDecl vardecl))
+            {
+                s.Value.Accept(this);
+                if (vardecl.Type.Lexeme != s.Value.Type)
+                    throw new TypeErrorException($"{s.Value.Type} is not assignable to {vardecl.Type.Lexeme}");
+            }
+            else
+            {
+                throw new TypeErrorException("Variable not declared");
+            }
+            return null;
         }
 
         public object Visit(FunCallStmt s)
@@ -52,11 +64,15 @@ namespace TypeCheck
 
         public object Visit(AddExpr e)
         {
-            //e.Lhs.Accept(this);
-            //e.Rhs.Accept(this);
-            //if (Any("bool", e.Lhs, e.Rhs))
-            //    throw new TypeErrorException("bool not valid for " + e.GetType().Name);
-            
+            var valid = new[] { "int", "string" };
+            e.Lhs.Accept(this);
+            e.Rhs.Accept(this);
+
+            var invalid = new[] { e.Rhs.Type, e.Lhs.Type }.Except(valid);
+
+            if (invalid.Any())
+                throw new TypeErrorException(string.Join(", ", invalid) + " not valid for " + e.GetType().Name);
+
             e.Type = EQ(e.Lhs.Type, e.Rhs.Type, e);
             return null;
         }
