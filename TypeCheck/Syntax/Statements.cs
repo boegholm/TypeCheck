@@ -5,12 +5,12 @@ namespace TypeCheck
     abstract record AStmt() {
         public abstract T Accept<T>(IStatementVisitor<T> visitor);
     }
-    record VarDecl(ITypeToken Type, TIdent Name) : AStmt, IDeclaration
+    record VarDecl(TypeToken Type, TIdent Name) : AStmt, IDeclaration
     {
         public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.Visit(this);
     }
 
-    record StructDecl(TIdent Name, List<VarDecl> members) :AStmt, IDeclaration
+    record StructDecl(TIdent Name, IEnumerable<VarDecl> members) :AStmt, IDeclaration
     {
         public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.Visit(this);
     }
@@ -23,7 +23,7 @@ namespace TypeCheck
     {
         public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.Visit(this);
     }
-    record FuncDecl(TIdent Name, ITypeToken ReturnType, List<VarDecl> Parameters, AStmt body) : AStmt, IDeclaration
+    record FuncDecl(TIdent Name, TypeToken ReturnType, List<VarDecl> Parameters, AStmt body) : AStmt, IDeclaration
     {
         public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.Visit(this);
     }

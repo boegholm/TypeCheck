@@ -1,31 +1,42 @@
 ﻿namespace TypeCheck
 {
-    record IToken { }
-    record ITypeToken(string Lexeme) : IToken { }
+    record Token { }
+    record TypeToken(string Lexeme) : Token { 
+        public static implicit operator TypeToken(string s)=> s switch
+        {
+            "bool"=>new TBoolType(),
+            "int" => new TIntType(),
+            "string" => new TStringType(),
+            _ => new TypeToken(s)
+        };
+    }
 
-    record TBoolType : ITypeToken
+    record TBoolType : TypeToken
     {
         public TBoolType() : base("bool")
         {
         }
     }
 
-    record TStringType : ITypeToken
+    record TStringType : TypeToken
     {
         public TStringType() : base("string")
         {
         }
     }
 
-    record TIntType : ITypeToken
+    record TIntType : TypeToken
     {
         public TIntType() : base("int")
         {
         }
     }
 
-    record TIdent(string Value) : IToken;
-    record TBoolLit(bool Value) : IToken;
-    record TStringLit(string Value) : IToken;
-    record TIntLit(int Value) : IToken;
+    record TIdent(string Value) : Token
+    {
+        public static implicit operator TIdent(string v)=> new TIdent(v);
+    }
+    record TBoolLit(bool Value) : Token;
+    record TStringLit(string Value) : Token;
+    record TIntLit(int Value) : Token;
 }

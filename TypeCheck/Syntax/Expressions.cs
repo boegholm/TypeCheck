@@ -97,4 +97,12 @@ namespace TypeCheck
             return visitor.Visit(this);
         }
     }
+
+    record CompoundValueExpr(List<AExpr> Values) : AExpr
+    {
+        public override T Accept<T>(IExpressionVisitor<T> visitor)
+        {
+            return visitor.Visit(this);
+        }
+    }
 }

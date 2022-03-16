@@ -118,5 +118,7 @@ namespace TypeCheck
         public object Visit(SkipStmt skip) => null;
 
         public object Visit(StructDecl structDecl) => st.AddDeclaration(structDecl);
+
+        public string Visit(CompoundValueExpr e) => e.Type = string.Join("|", e.Values.Select(v => v.Accept(this)));
     }
 }

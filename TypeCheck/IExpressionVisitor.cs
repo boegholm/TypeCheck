@@ -13,5 +13,6 @@
         T Visit(IntLit e);
         T Visit(BoolLit e);
         T Visit(FunCall e);
+        T Visit(CompoundValueExpr compoundValueExpr);
     }
 }
