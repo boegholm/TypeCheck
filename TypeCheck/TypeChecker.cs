@@ -148,7 +148,7 @@ namespace TypeCheck
 
         public object Visit(SkipStmt skip)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

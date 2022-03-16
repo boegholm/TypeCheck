@@ -3,9 +3,6 @@ using System.Collections.Generic;
 
 namespace TypeCheck
 {
-
-
-
     internal class Program
     {
         static FuncDecl printISI = new FuncDecl(new TIdent("PrintISI"), new TBoolType(), new List<VarDecl> {
