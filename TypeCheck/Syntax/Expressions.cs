@@ -8,6 +8,7 @@ namespace TypeCheck
     {
         public abstract T Accept<T>(IExpressionVisitor<T> visitor);
         public virtual string Type { get; set; }
+
     }
     
     record AddExpr(AExpr Lhs, AExpr Rhs) : AExpr
@@ -98,7 +99,7 @@ namespace TypeCheck
         }
     }
 
-    record CompoundValueExpr(List<AExpr> Values) : AExpr
+    record CompoundValueExpr(IEnumerable<AExpr> Values) : AExpr
     {
         public override T Accept<T>(IExpressionVisitor<T> visitor)
         {

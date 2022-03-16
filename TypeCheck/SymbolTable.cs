@@ -40,7 +40,7 @@ namespace TypeCheck
         {
             FuncDecl fd => fd.ReturnType.Lexeme,
             VarDecl vd => vd.Type.Lexeme,
-            StructDecl sd => string.Join("|", sd.members.Select(v => v.Type))
+            StructDecl sd => string.Join("|", sd.members.Select(v => v.Type.Lexeme))
         };
 
         public bool TryLookup<T>(string name, out T decl) where T : IDeclaration

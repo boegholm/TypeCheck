@@ -17,6 +17,8 @@ namespace TypeCheck
             AStmt p = new StmtSeq(new()
             {
                 new StructDecl("Person", new[] {new VarDecl("string", "Name"), new VarDecl("string", "Lastname") }),
+                new VarDecl("Person", "p"),
+                new AssignStmt("p", new CompoundValueExpr(new[] {new StringLit("Thomas"), new StringLit("Bøgholm")})),
                 // int i
                 new VarDecl(new TIntType(), new TIdent("i")),
                 // bool b

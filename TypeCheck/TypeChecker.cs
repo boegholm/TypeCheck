@@ -21,7 +21,19 @@ namespace TypeCheck
             if(st.TryLookup(s.VarName.Value, out VarDecl vardecl))
             {
                 s.Value.Accept(this);
-                if (vardecl.Type.Lexeme != s.Value.Type)
+
+                //structure equivalence
+                string varTypeStructure = st.TryLookup(vardecl.Type.Lexeme, out StructDecl varStructType) ? st.LookupType(varStructType) : vardecl.Type.Lexeme;
+                string eStructType = st.TryLookup(s.Value.Type, out StructDecl valStructType) ? st.LookupType(valStructType) : s.Value.Type;
+                if (eStructType != varTypeStructure)
+                {
+                    throw new TypeErrorException($"{s.Value.Type} is not assignable to {vardecl.Type.Lexeme}");
+                }
+                else
+                    return vardecl.Type.Lexeme;
+
+                // regular equivalence
+                if (vardecl.Type.Lexeme == s.Value.Type )
                     throw new TypeErrorException($"{s.Value.Type} is not assignable to {vardecl.Type.Lexeme}");
                 else
                     return vardecl.Type.Lexeme;
