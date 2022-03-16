@@ -63,7 +63,7 @@ namespace TypeCheck
         public object Visit(StmtSeq s)
         {
             List<AStmt> Missing = new();
-            foreach (var v in s.Seq.Where(v=>v is FuncDecl or StructDecl))
+            foreach (var v in s.Seq)
             {
                 try
                 {

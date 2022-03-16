@@ -47,10 +47,10 @@ namespace TypeCheck
 
             //Console.WriteLine("PrettyPrint:");
             //Console.WriteLine(p.Accept(new PPVisitor()));
-            Console.WriteLine();
-            Console.WriteLine("Pretty Print with Types");
-            Console.WriteLine(p.Accept(new TypedPPVisitor()));
-            Console.WriteLine();
+            //Console.WriteLine();
+            //Console.WriteLine("Pretty Print with Types");
+            //Console.WriteLine(p.Accept(new TypedPPVisitor()));
+            //Console.WriteLine();
             p.Accept(new TypeChecker());
         }
     }
