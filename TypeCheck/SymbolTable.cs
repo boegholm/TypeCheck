@@ -21,7 +21,7 @@ namespace TypeCheck
         public void CloseScope() { Symbols.Pop(); }
         public string AddDeclaration(IDeclaration decl)
         {
-            Current.Add(decl.Name.Value, decl);
+            Current[decl.Name.Value] =  decl;
             return LookupType(decl);
         }
 
@@ -42,6 +42,26 @@ namespace TypeCheck
             VarDecl vd => vd.Type.Lexeme,
             StructDecl sd => string.Join("|", sd.members.Select(v => v.Type.Lexeme))
         };
+        public bool TryLookupType(string name, out string result)
+        {
+            switch (name)
+            {
+                case "int" or "string" or "bool":
+                    result = name;
+                    return true;
+                default:
+                    if (TryLookup(name, out IDeclaration d))
+                    {
+                        result = LookupType(d);
+                        return true;
+                    }
+                    else
+                    {
+                        result = null;
+                        return false;
+                    }
+            }
+        }
 
         public bool TryLookup<T>(string name, out T decl) where T : IDeclaration
         {

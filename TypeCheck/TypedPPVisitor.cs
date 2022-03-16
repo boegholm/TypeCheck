@@ -7,7 +7,7 @@
         public override string Visit(FuncDecl s) => $"[[{st.AddDeclaration(s)}]] {base.Visit(s)}";
         public override string Visit(StructDecl s) => $"[[{st.AddDeclaration(s)}]] {base.Visit(s)}";
         public override string Visit(VarDecl s) => $"[[{st.AddDeclaration(s)}]] {base.Visit(s)}";
-
+        public override string Visit(AssignStmt s) => $"[[{st.LookupType(s.VarName.Value)}]] {base.Visit(s)}";  
         private string TypeString(AExpr e)
         {
             try

@@ -7,10 +7,11 @@ namespace TypeCheck
     }
     record VarDecl(TypeToken Type, TIdent Name) : AStmt, IDeclaration
     {
+        public static implicit operator VarDecl((string type, string name) vt) =>new VarDecl(vt.type, vt.name);
         public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.Visit(this);
     }
 
-    record StructDecl(TIdent Name, IEnumerable<VarDecl> members) :AStmt, IDeclaration
+    record StructDecl(TIdent Name, IEnumerable<VarDecl> members) :AStmt, ITypeDeclaration
     {
         public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.Visit(this);
     }

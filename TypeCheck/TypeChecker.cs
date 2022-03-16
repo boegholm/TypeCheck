@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace TypeCheck
 {
+
+    
+
     class TypeChecker : IStatementVisitor<object>, IExpressionVisitor<string>
     {
         SymbolTable st;
@@ -13,7 +16,8 @@ namespace TypeCheck
         }
         public TypeChecker() : this(new SymbolTable()){ }
 
-        public object Visit(VarDecl s) => st.AddDeclaration(s);
+        public object Visit(VarDecl s) => st.TryLookupType(s.Type.Lexeme, out var _)? st.AddDeclaration(s):throw new TypeErrorException($"Type {s.Type.Lexeme} not found!");
+        
 
         public object Visit(AssignStmt s)
         {
@@ -58,7 +62,19 @@ namespace TypeCheck
 
         public object Visit(StmtSeq s)
         {
-            foreach (var v in s.Seq)
+            List<AStmt> Missing = new();
+            foreach (var v in s.Seq.Where(v=>v is FuncDecl or StructDecl))
+            {
+                try
+                {
+                    v.Accept(this);
+                }
+                catch
+                {
+                    Missing.Add(v);
+                }
+            }
+            foreach (var v in Missing)
                 v.Accept(this);
             return null;
         }
@@ -129,7 +145,14 @@ namespace TypeCheck
 
         public object Visit(SkipStmt skip) => null;
 
-        public object Visit(StructDecl structDecl) => st.AddDeclaration(structDecl);
+        public object Visit(StructDecl structDecl) {
+            var t = st.AddDeclaration(structDecl);
+            st.OpenScope();
+            foreach (var v in structDecl.members)
+                v.Accept(this);
+            st.CloseScope();
+            return t;
+        }
 
         public string Visit(CompoundValueExpr e) => e.Type = string.Join("|", e.Values.Select(v => v.Accept(this)));
     }

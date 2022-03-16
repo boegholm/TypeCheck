@@ -4,4 +4,5 @@
     { 
         TIdent Name { get; }
     }
+    interface ITypeDeclaration : IDeclaration { }
 }

@@ -45,11 +45,11 @@ namespace TypeCheck
         public virtual string Visit(StructDecl structDecl)
         {
             return
-@$"struct {structDecl.Name}{{
-{string.Join($",{Environment.NewLine}", structDecl.members.Select(v => $"{ v.Type} { v.Name.Value}"))}
+@$"struct {structDecl.Name.Value}{{
+{string.Join($",{Environment.NewLine}", structDecl.members.Select(v => $"{ v.Type.Lexeme} { v.Name.Value}"))}
 }}";
         }
-        public string Visit(AssignStmt s) => L(s.VarName.Value, " = ", s.Value.Accept(this));
+        public virtual string Visit(AssignStmt s) => L(s.VarName.Value, " = ", s.Value.Accept(this));
 
         public string Visit(FunCallStmt s) => $"{s.fun.Accept(this)} ;";
 
