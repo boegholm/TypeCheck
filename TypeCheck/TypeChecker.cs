@@ -47,7 +47,8 @@ namespace TypeCheck
 
         public object Visit(FuncDecl s)
         {
-            throw new NotImplementedException();
+            s.body.Accept(this);
+            return null;
         }
 
         public object Visit(StmtSeq s)
@@ -79,7 +80,17 @@ namespace TypeCheck
 
         public object Visit(SubExpr e)
         {
-            throw new NotImplementedException();
+            var valid = new[] { "int" };
+            e.Lhs.Accept(this);
+            e.Rhs.Accept(this);
+
+            var invalid = new[] { e.Rhs.Type, e.Lhs.Type }.Except(valid);
+
+            if (invalid.Any())
+                throw new TypeErrorException(string.Join(", ", invalid) + " not valid for " + e.GetType().Name);
+
+            e.Type = EQ(e.Lhs.Type, e.Rhs.Type, e);
+            return null;
         }
 
         public object Visit(MulExpr e)

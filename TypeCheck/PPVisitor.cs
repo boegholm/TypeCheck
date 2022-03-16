@@ -61,10 +61,9 @@ namespace TypeCheck
         {
             throw new NotImplementedException();
         }
-
         public string Visit(SkipStmt skip)
         {
-            throw new NotImplementedException();
+            return ";";
         }
     }
 }
