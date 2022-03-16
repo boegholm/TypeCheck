@@ -4,24 +4,16 @@ using System.Linq;
 
 namespace TypeCheck
 {
-    class TypeChecker : IStatementVisitor<object>, IExpressionVisitor<object>
+    class TypeChecker : IStatementVisitor<object>, IExpressionVisitor<string>
     {
-        SymbolTable st = new SymbolTable();
-        
-        private string EQ(string a, string b, AExpr e)
+        SymbolTable st;
+        public TypeChecker(SymbolTable st)
         {
-            if (!a.Equals(b)) throw new TypeErrorException(e.GetType().Name + " operands must be equal be of same type");
-            return a;
+            this.st = st;
         }
-        private bool Any(string type, params AExpr[] expressions) => expressions.Any(v => v.Type.Equals(type));
+        public TypeChecker() : this(new SymbolTable()){ }
 
-        private IEnumerable<T> AE<T>(params T[] es) => es;
-
-        public object Visit(VarDecl s)
-        {
-            st.AddDeclation(s);
-            return null;
-        }
+        public object Visit(VarDecl s) => st.AddDeclaration(s);
 
         public object Visit(AssignStmt s)
         {
@@ -31,12 +23,13 @@ namespace TypeCheck
                 s.Value.Accept(this);
                 if (vardecl.Type.Lexeme != s.Value.Type)
                     throw new TypeErrorException($"{s.Value.Type} is not assignable to {vardecl.Type.Lexeme}");
+                else
+                    return vardecl.Type.Lexeme;
             }
             else
             {
-                throw new TypeErrorException("Variable not declared");
+                throw new TypeErrorException($"Variable [{s.VarName.Value}] not declared");
             }
-            return null;
         }
 
         public object Visit(FunCallStmt s)
@@ -48,7 +41,7 @@ namespace TypeCheck
         public object Visit(FuncDecl s)
         {
             s.body.Accept(this);
-            return null;
+            return st.LookupType(s);
         }
 
         public object Visit(StmtSeq s)
@@ -63,78 +56,54 @@ namespace TypeCheck
             throw new NotImplementedException();
         }
 
-        public object Visit(AddExpr e)
+        public string Visit(AddExpr e) => (e.Lhs.Accept(this), e.Rhs.Accept(this)) switch
         {
-            var valid = new[] { "int", "string" };
-            e.Lhs.Accept(this);
-            e.Rhs.Accept(this);
+            ("int", "int") => e.Type = "int",
+            ("string", "string") => e.Type="string",
+            var (x,y) => throw new TypeErrorException($"Operands must be either string or int: {x},{y}")
+        };
 
-            var invalid = new[] { e.Rhs.Type, e.Lhs.Type }.Except(valid);
-
-            if (invalid.Any())
-                throw new TypeErrorException(string.Join(", ", invalid) + " not valid for " + e.GetType().Name);
-
-            e.Type = EQ(e.Lhs.Type, e.Rhs.Type, e);
-            return null;
-        }
-
-        public object Visit(SubExpr e)
+        public string Visit(SubExpr e) => (e.Lhs.Accept(this), e.Rhs.Accept(this)) switch
         {
-            var valid = new[] { "int" };
-            e.Lhs.Accept(this);
-            e.Rhs.Accept(this);
+            ("int", "int") => e.Type = "int",
+            _ => throw new TypeErrorException("Operands must be int")
+        };
 
-            var invalid = new[] { e.Rhs.Type, e.Lhs.Type }.Except(valid);
-
-            if (invalid.Any())
-                throw new TypeErrorException(string.Join(", ", invalid) + " not valid for " + e.GetType().Name);
-
-            e.Type = EQ(e.Lhs.Type, e.Rhs.Type, e);
-            return null;
-        }
-
-        public object Visit(MulExpr e)
+        public string Visit(MulExpr e) => (e.Lhs.Accept(this), e.Rhs.Accept(this)) switch
         {
-            throw new NotImplementedException();
-        }
+            ("int", "int") => e.Type = "int",
+            _ => throw new TypeErrorException("Operands must be int")
+        };
 
-        public object Visit(DivExpr e)
+        public string Visit(DivExpr e) => (e.Lhs.Accept(this), e.Rhs.Accept(this)) switch
         {
-            throw new NotImplementedException();
-        }
+            ("int", "int") => e.Type = "int",
+            _ => throw new TypeErrorException("Operands must be int")
+        };
 
-        public object Visit(AndExpr e)
+        public string Visit(AndExpr e) => (e.Lhs.Accept(this), e.Rhs.Accept(this)) switch
         {
-            throw new NotImplementedException();
-        }
+            ("bool", "bool") => e.Type = "bool",
+            _ => throw new TypeErrorException("Operands must be bool")
+        };
 
-        public object Visit(OrExpr e)
+
+        public string Visit(OrExpr e) => (e.Lhs.Accept(this), e.Rhs.Accept(this)) switch
         {
-            throw new NotImplementedException();
-        }
+            ("bool", "bool") => e.Type="bool",
+            _ => throw new TypeErrorException("Operands must be bool")
+        };
 
-        public object Visit(NameExpr e)
-        {
-            e.Type = st.LookupType(e.Name.Value);
-            return null;
-        }
 
-        public object Visit(StringLit e)
-        {
-            throw new NotImplementedException();
-        }
+        public string Visit(NameExpr e) =>  e.Type = st.LookupType(e.Name.Value);
 
-        public object Visit(IntLit e)
-        {
-            throw new NotImplementedException();
-        }
+        public string Visit(StringLit e) => e.Type = "string";
 
-        public object Visit(BoolLit e)
-        {
-            throw new NotImplementedException();
-        }
+        public string Visit(IntLit e) => e.Type = "int";
 
-        public object Visit(FunCall e)
+        public string Visit(BoolLit e) => e.Type = "bool";
+
+        public string Visit(FunCall e)
         {
             if (st.TryLookup(e.Name.Value, out FuncDecl declaration))
             {
@@ -143,12 +112,11 @@ namespace TypeCheck
             {
                 throw new TypeErrorException("No such function " + e.Name.Value);
             }
-            return null;
+            return e.Type;
         }
 
-        public object Visit(SkipStmt skip)
-        {
-            return null;
-        }
+        public object Visit(SkipStmt skip) => null;
+
+        public object Visit(StructDecl structDecl) => st.AddDeclaration(structDecl);
     }
 }

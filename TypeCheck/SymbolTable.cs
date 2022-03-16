@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace TypeCheck
 {
@@ -12,15 +13,16 @@ namespace TypeCheck
                 new VarDecl(new TStringType(), new TIdent("v")),
                 new VarDecl(new TIntType(), new TIdent("v")),}
     , new SkipStmt());
-            AddDeclation(printISI);
+            AddDeclaration(printISI);
         }
         Stack<Dictionary<string, IDeclaration>> Symbols { get; } = new Stack<Dictionary<string, IDeclaration>>();
         private Dictionary<string, IDeclaration> Current => Symbols.Peek();
         public void OpenScope() { Symbols.Push(new Dictionary<string, IDeclaration>()); }
         public void CloseScope() { Symbols.Pop(); }
-        public void AddDeclation(IDeclaration decl)
+        public string AddDeclaration(IDeclaration decl)
         {
             Current.Add(decl.Name.Value, decl);
+            return LookupType(decl);
         }
 
         public bool IsLocal(string name) => Current.ContainsKey(name);
@@ -33,10 +35,12 @@ namespace TypeCheck
             }
             throw new NotDeclaredException(name);
         }
-        public string LookupType(string name) => Lookup(name) switch
+        public string LookupType(string name) => LookupType(Lookup(name));
+        public string LookupType(IDeclaration declaration) => declaration switch
         {
             FuncDecl fd => fd.ReturnType.Lexeme,
-            VarDecl vd => vd.Type.Lexeme
+            VarDecl vd => vd.Type.Lexeme,
+            StructDecl sd => string.Join("|", sd.members.Select(v => v.Type))
         };
 
         public bool TryLookup<T>(string name, out T decl) where T : IDeclaration

@@ -10,6 +10,11 @@ namespace TypeCheck
         public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.Visit(this);
     }
 
+    record StructDecl(TIdent Name, List<VarDecl> members) :AStmt, IDeclaration
+    {
+        public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.Visit(this);
+    }
+
     record AssignStmt(TIdent VarName, AExpr Value) : AStmt
     {
         public override T Accept<T>(IStatementVisitor<T> visitor) => visitor.Visit(this);

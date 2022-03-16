@@ -9,5 +9,6 @@
         T Visit(StmtSeq s);
         T Visit(IfStmt s);
         T Visit(SkipStmt skip);
+        T Visit(StructDecl structDecl);
     }
 }

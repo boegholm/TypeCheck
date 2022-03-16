@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace TypeCheck
 {
@@ -6,8 +7,9 @@ namespace TypeCheck
     abstract record AExpr
     {
         public abstract T Accept<T>(IExpressionVisitor<T> visitor);
-        public string Type { get; set; }
+        public virtual string Type { get; set; }
     }
+    
     record AddExpr(AExpr Lhs, AExpr Rhs) : AExpr
     {
         public override T Accept<T>(IExpressionVisitor<T> visitor)

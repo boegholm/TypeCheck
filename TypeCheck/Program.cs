@@ -21,7 +21,7 @@ namespace TypeCheck
                 // int k
                 new VarDecl(new TIntType(), new TIdent("k")),
                 // k = i + b
-                new AssignStmt(new TIdent("K"), new AddExpr(new NameExpr(new TIdent("i")), new NameExpr(new TIdent("b")))),
+                new AssignStmt(new TIdent("k"), new AddExpr(new NameExpr(new TIdent("i")), new NameExpr(new TIdent("b")))),
 
                 new FunCallStmt(new FunCall(new TIdent("PrintISI"), new List<AExpr> {
                     new NameExpr(new TIdent("k")),
@@ -31,6 +31,7 @@ namespace TypeCheck
             });
 
             Console.WriteLine(p.Accept(new PPVisitor()));
+            Console.WriteLine(p.Accept(new TypedPPVisitor()));
 
             p.Accept(new TypeChecker());
         }
