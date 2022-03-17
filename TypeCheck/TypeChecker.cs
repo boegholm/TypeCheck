@@ -9,6 +9,7 @@ namespace TypeCheck
 
     class TypeChecker : IStatementVisitor<object>, IExpressionVisitor<string>
     {
+        string TYPE_ERROR(AExpr e, string message) => throw new TypeErrorException(e.GetType().FullName + "]] " + message);
         SymbolTable st;
         public TypeChecker(SymbolTable st)
         {
@@ -88,38 +89,38 @@ namespace TypeCheck
         {
             ("int", "int") => e.Type = "int",
             ("string", "string") => e.Type="string",
-            var (x,y) => throw new TypeErrorException($"Operands must be either string or int: {x},{y}")
+            var (x,y) => TYPE_ERROR(e, $"Operands must be either string or int: {x},{y}")
         };
 
         public string Visit(SubExpr e) => (e.Lhs.Accept(this), e.Rhs.Accept(this)) switch
         {
             ("int", "int") => e.Type = "int",
-            _ => throw new TypeErrorException("Operands must be int")
+            var (x, y) => TYPE_ERROR(e, $"Operands must be int: {x},{y}")
         };
 
         public string Visit(MulExpr e) => (e.Lhs.Accept(this), e.Rhs.Accept(this)) switch
         {
             ("int", "int") => e.Type = "int",
-            _ => throw new TypeErrorException("Operands must be int")
+            var (x, y) => TYPE_ERROR(e, $"Operands must be int: {x},{y}")
         };
 
         public string Visit(DivExpr e) => (e.Lhs.Accept(this), e.Rhs.Accept(this)) switch
         {
             ("int", "int") => e.Type = "int",
-            _ => throw new TypeErrorException("Operands must be int")
+            var (x, y) => TYPE_ERROR(e, $"Operands must be int: {x},{y}")
         };
 
         public string Visit(AndExpr e) => (e.Lhs.Accept(this), e.Rhs.Accept(this)) switch
         {
             ("bool", "bool") => e.Type = "bool",
-            _ => throw new TypeErrorException("Operands must be bool")
+            var (x, y) => TYPE_ERROR(e, $"Operands must be bool: {x},{y}")
         };
 
 
         public string Visit(OrExpr e) => (e.Lhs.Accept(this), e.Rhs.Accept(this)) switch
         {
             ("bool", "bool") => e.Type="bool",
-            _ => throw new TypeErrorException("Operands must be bool")
+            var (x, y) => TYPE_ERROR(e, $"Operands must be bool: {x},{y}")
         };
 
 
