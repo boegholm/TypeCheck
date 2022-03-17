@@ -3,6 +3,19 @@ using System.Collections.Generic;
 
 namespace ExampleAST
 {
+
+    class CSTPP : IVisitor<string>
+    {
+        public string Visit(ParanExpr paranExpr) => $"({paranExpr.Expr.Accept(this)})";
+        public string Visit(ConstExpr constExpr) => constExpr.Val;
+        public string Visit(AddExpr addExpr) => $"{addExpr.Lhs.Accept(this)}+{addExpr.Rhs.Accept(this)}";
+    }
+    class ASTPP : IAbsVisitor<string>
+    {
+        public string Visit(Add addExpr) => $"{addExpr.Lhs.Accept(this)}+{addExpr.Rhs.Accept(this)}";
+        public string Visit(IntVal intVal) => intVal.Val.ToString();
+    }
+
     internal class Program
     {
         static void Main(string[] args)
@@ -38,9 +51,19 @@ namespace ExampleAST
                     )
                 )
             );
+           
+
             IAbsExpr ast = e4.Accept(new CSTToASTVisitor());
 
             int result = ast.Accept(new ComputeVisitor());
+
+            Console.WriteLine("*************************************");
+            Console.WriteLine("CST: "+ e4.Accept(new CSTPP()));
+            Console.WriteLine("*************************************");
+            Console.WriteLine("AST: " + ast.Accept(new ASTPP()));
+            Console.WriteLine("*************************************");
+
+
 
             Console.WriteLine("The result is: "+result);
 
