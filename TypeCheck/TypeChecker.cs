@@ -4,9 +4,6 @@ using System.Linq;
 
 namespace TypeCheck
 {
-
-    
-
     class TypeChecker : IStatementVisitor<object>, IExpressionVisitor<string>
     {
         string TYPE_ERROR(AExpr e, string message) => throw new TypeErrorException(e.GetType().FullName + "]] " + message);
@@ -28,8 +25,10 @@ namespace TypeCheck
                 s.Value.Accept(this);
 
                 //structure equivalence
-                string varTypeStructure = st.TryLookup(vardecl.Type.Lexeme, out StructDecl varStructType) ? st.LookupType(varStructType) : vardecl.Type.Lexeme;
-                string eStructType = st.TryLookup(s.Value.Type, out StructDecl valStructType) ? st.LookupType(valStructType) : s.Value.Type;
+                string varTypeStructure = st.TryLookup(vardecl.Type.Lexeme, out StructDecl varStructType) ? 
+                    st.LookupType(varStructType) : vardecl.Type.Lexeme;
+                string eStructType = st.TryLookup(s.Value.Type, out StructDecl valStructType) ? 
+                    st.LookupType(valStructType) : s.Value.Type;
                 if (eStructType != varTypeStructure)
                 {
                     throw new TypeErrorException($"{s.Value.Type} is not assignable to {vardecl.Type.Lexeme}");
@@ -39,9 +38,9 @@ namespace TypeCheck
 
                 // regular equivalence
                 if (vardecl.Type.Lexeme == s.Value.Type )
-                    throw new TypeErrorException($"{s.Value.Type} is not assignable to {vardecl.Type.Lexeme}");
-                else
                     return vardecl.Type.Lexeme;
+                throw new TypeErrorException($"{s.Value.Type} is not assignable to {vardecl.Type.Lexeme}");
+
             }
             else
             {
@@ -155,6 +154,6 @@ namespace TypeCheck
             return t;
         }
 
-        public string Visit(CompoundValueExpr e) => e.Type = string.Join("|", e.Values.Select(v => v.Accept(this)));
+        public string Visit(CompositeValueExpression e) => e.Type = string.Join("|", e.Values.Select(v => v.Accept(this)));
     }
 }

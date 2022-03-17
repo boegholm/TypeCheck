@@ -3,14 +3,13 @@ using System.Collections.Generic;
 
 namespace TypeCheck
 {
-
     abstract record AExpr
     {
         public abstract T Accept<T>(IExpressionVisitor<T> visitor);
         public virtual string Type { get; set; }
 
     }
-    
+
     record AddExpr(AExpr Lhs, AExpr Rhs) : AExpr
     {
         public override T Accept<T>(IExpressionVisitor<T> visitor)
@@ -99,7 +98,7 @@ namespace TypeCheck
         }
     }
 
-    record CompoundValueExpr(IEnumerable<AExpr> Values) : AExpr
+    record CompositeValueExpression(IEnumerable<AExpr> Values) : AExpr
     {
         public override T Accept<T>(IExpressionVisitor<T> visitor)
         {

@@ -74,6 +74,6 @@ namespace TypeCheck
             return ";";
         }
 
-        public string Visit(CompoundValueExpr e)=>"(" + string.Join(",",e.Values.Select(v=>v.Accept(this))) +")";
+        public string Visit(CompositeValueExpression e)=>"(" + string.Join(",",e.Values.Select(v=>v.Accept(this))) +")";
     }
 }
